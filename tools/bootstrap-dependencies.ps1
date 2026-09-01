@@ -76,8 +76,10 @@ Assert-LastExitCode 'Installing aqtinstall'
 
 $qtCMakeConfig = Join-Path $qtRoot "$qtVersion\msvc2019_64\lib\cmake\Qt6\Qt6Config.cmake"
 if (-not (Test-Path -LiteralPath $qtCMakeConfig)) {
+    # QtSvg ships in the Qt 6.7 desktop base archive and is not a separately
+    # selectable aqt module. Requesting qtsvg makes clean installs fail.
     & $venvPython -m aqt install-qt windows desktop $qtVersion $qtArchitecture `
-        --outputdir $qtRoot -m qtsvg
+        --outputdir $qtRoot
     Assert-LastExitCode 'Installing Qt'
 }
 
