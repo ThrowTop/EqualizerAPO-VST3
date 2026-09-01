@@ -1,0 +1,5 @@
+<Project>
+  <Target Name="HideCMakeGeneratedDirectories" BeforeTargets="PrepareForBuild">
+    <Exec Command="powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File &quot;@PROJECT_SOURCE_DIR@/cmake/HideBuildInternals.ps1&quot; -BuildDir &quot;@CMAKE_BINARY_DIR@&quot;" IgnoreExitCode="true" StandardOutputImportance="Low" StandardErrorImportance="Low" />
+  </Target>
+</Project>

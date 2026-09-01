@@ -1,0 +1,58 @@
+name: Build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows-x64:
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 90
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v6
+
+      - name: Bootstrap pinned dependencies
+        shell: pwsh
+        run: tools/bootstrap-dependencies.ps1
+
+      - name: Configure
+        shell: pwsh
+        run: >-
+          cmake --preset default
+          -DEAPO_SIMD=BASELINE
+          -DEAPO_BUILD_BENCHMARK=OFF
+
+      - name: Build
+        shell: pwsh
+        run: cmake --build --preset release
+
+      - name: Test
+        shell: pwsh
+        run: ctest --test-dir build/vs2026 -C Release --output-on-failure
+
+      - name: Install NSIS
+        shell: pwsh
+        run: choco install nsis --version=3.12.0 --yes --no-progress
+
+      - name: Build release artifacts
+        shell: pwsh
+        run: cmake --build --preset release-artifacts
+
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: EqualizerAPO-VST3-windows-x64
+          path: |
+            dist/*.zip
+            dist/*-setup.exe
+          if-no-files-found: error

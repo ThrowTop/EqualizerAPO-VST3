@@ -1,0 +1,134 @@
+{
+  "$comment": "One Visual Studio configure tree contains the original Debug and Release configurations.",
+  "version": 12,
+  "cmakeMinimumRequired": {
+    "major": 4,
+    "minor": 4,
+    "patch": 2
+  },
+  "configurePresets": [
+    {
+      "name": "default",
+      "displayName": "Default (Visual Studio 2026)",
+      "description": "EqualizerAPO-VST3 build using VS 2026, Qt 6, and manifest-mode vcpkg",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "generator": "Visual Studio 18 2026",
+      "architecture": {
+        "value": "x64",
+        "strategy": "set"
+      },
+      "toolchainFile": "${sourceDir}/.deps/vcpkg/scripts/buildsystems/vcpkg.cmake",
+      "binaryDir": "${sourceDir}/build/vs2026",
+      "installDir": "${sourceDir}/build/vs2026/.manual-install",
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": false,
+        "Qt6_ROOT": "${sourceDir}/.deps/Qt/6.7.2/msvc2019_64",
+        "VCPKG_MANIFEST_INSTALL": true,
+        "VCPKG_TARGET_TRIPLET": "x64-windows",
+        "EAPO_SIMD": "BASELINE",
+        "EAPO_BUILD_BENCHMARK": false,
+        "EAPO_BUILD_UPDATE_CHECKER": false
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "debug",
+      "displayName": "Debug",
+      "configurePreset": "default",
+      "configuration": "Debug",
+      "jobs": 0
+    },
+    {
+      "name": "release",
+      "displayName": "Release",
+      "configurePreset": "default",
+      "configuration": "Release",
+      "jobs": 0
+    },
+    {
+      "name": "translations",
+      "displayName": "Refresh Editor translation source catalogs",
+      "configurePreset": "default",
+      "configuration": "Release",
+      "targets": [
+        "update-editor-translations"
+      ],
+      "jobs": 0
+    },
+    {
+      "name": "package",
+      "displayName": "Build the portable ZIP into dist/",
+      "configurePreset": "default",
+      "configuration": "Release",
+      "targets": [
+        "package-standalone"
+      ],
+      "jobs": 0
+    },
+    {
+      "name": "deploy",
+      "displayName": "Stage and deploy Release, then restart Windows Audio",
+      "configurePreset": "default",
+      "configuration": "Release",
+      "targets": [
+        "deploy-dev"
+      ],
+      "jobs": 0
+    },
+    {
+      "name": "installer",
+      "displayName": "Build the full Windows installer into dist/",
+      "configurePreset": "default",
+      "configuration": "Release",
+      "targets": [
+        "package-installer"
+      ],
+      "jobs": 0
+    },
+    {
+      "name": "release-artifacts",
+      "displayName": "Build portable ZIP and full Windows installer",
+      "configurePreset": "default",
+      "configuration": "Release",
+      "targets": [
+        "package-release"
+      ],
+      "jobs": 0
+    }
+  ],
+  "workflowPresets": [
+    {
+      "name": "portable-release",
+      "displayName": "Configure, build, stage, and archive the portable runtime",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "default"
+        },
+        {
+          "type": "build",
+          "name": "package"
+        }
+      ]
+    },
+    {
+      "name": "full-release",
+      "displayName": "Configure and build portable ZIP plus setup wizard",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "default"
+        },
+        {
+          "type": "build",
+          "name": "release-artifacts"
+        }
+      ]
+    }
+  ]
+}

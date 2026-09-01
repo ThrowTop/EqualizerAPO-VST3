@@ -1,0 +1,60 @@
+name: Bug report
+description: Report reproducible incorrect behavior in EqualizerAPO-VST3
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Remove private paths, device names, configs, plugin binaries, and unrelated dump data before posting.
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+      description: Use the release version or full commit hash.
+    validations:
+      required: true
+  - type: input
+    id: windows
+    attributes:
+      label: Windows version
+      placeholder: Windows 11 24H2, build 26100
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Include expected behavior and the smallest reproducible scenario.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction steps
+      placeholder: |
+        1. Install on ...
+        2. Select ...
+        3. Load ...
+    validations:
+      required: true
+  - type: textarea
+    id: audio
+    attributes:
+      label: Audio and plugin details
+      description: Include render/capture, sample rate, channels, plugin name/version/class ID, and whether the issue reproduces without plugins.
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Relevant evidence
+      description: Paste short redacted logs or link to a minimal config. Do not attach proprietary plugins or unredacted dumps.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I tested the current release or current main branch.
+          required: true
+        - label: I removed private and proprietary data.
+          required: true
